@@ -9,7 +9,7 @@
 </script>
 
 <header>
-  <h1>Decentralized Chat</h1>
+  <h1>🔫 💬 </h1>
   {#if $username }
     <div class="user-bio">
       <span> Hello <strong>{$username}</strong></span>
