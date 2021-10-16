@@ -9,6 +9,6 @@ npm install
 npm run dev
 ```
 
-to make one project like this acess [Fireship](https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA) youtube channel.
+to make one project like this access [Fireship](https://www.youtube.com/channel/UCsBjURrPoezykLs9EqgamOA) youtube channel.
 
 Watch the [Chat Dapp Video](https://youtu.be/J5x3OMXjgMc)
