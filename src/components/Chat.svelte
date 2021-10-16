@@ -1,9 +1,10 @@
 <script>
   import GUN from 'gun';
+  import { onMount } from 'svelte';
+  import debounce from 'lodash.debounce';
   import Login from "./Login.svelte";
   import ChatMessage from "./ChatMessage.svelte";
   import { username, user } from "../user/user";
-  import { onMount } from 'svelte';
 
   const db = GUN();
   let newMessage;
