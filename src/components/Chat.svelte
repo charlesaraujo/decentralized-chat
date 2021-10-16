@@ -9,11 +9,37 @@
   let newMessage;
   let messages = [];
 
+  let scrollBottom;
+  let lastScrollTop;
+  let canAutoScroll = true;
+  let unreadMessages = false;
+
+  const autoScroll = () =>{
+    setTimeout(() => scrollBottom?.scrollIntoView({ behavior: 'auto' }), 50);
+    unreadMessages = false;
+  }
+
+  const watchScroll = (e) =>{
+    canAutoScroll = (e.target.scrollTop || Infinity) > lastScrollTop;
+    lastScrollTop = e.target.scrollTop;
+  }
+
+  $: debouncedWatchScroll = debounce(watchScroll, 1000);
+
   onMount(() => {
+    
+    var match = {
+      // lexical queries are kind of like a limited RegEx or Glob.
+      '.': {
+        // property selector
+        '>': new Date(+new Date() - 1 * 1000 * 60 * 60 * 3).toISOString(), // find any indexed property larger ~3 hours ago
+      },
+      '-': 1, // filter in reverse
+    };
 
     // Get Messages
     db.get("chat")
-      .map()
+      .map(match)
       .once(async (data, id) =>{
         if(data) {
           // Key for end-to-end encryption
@@ -27,6 +53,11 @@
 
           if(message.what) {
             messages = [...messages.slice(-100), message];
+            if (canAutoScroll) {
+              autoScroll();
+            } else {
+              unreadMessages = true;
+            }
           }
         }
       })
@@ -37,20 +68,36 @@
     const index = new Date().toISOString();
     db.get("chat").get(index).put(message);
     newMessage = "";
+    canAutoScroll = true;
+    autoScroll();
   }
 </script>
 
 <div class="container">
   {#if $username}
-    <main>
+    <main on:scroll={debouncedWatchScroll}>
       {#each messages as message (message.when)}
         <ChatMessage {message} sender={$username} />
       {/each}
+      <div class="dummy" bind:this={scrollBottom} />
     </main>
 
     <form on:submit|preventDefault={sendMessage}>
-
+      <input type="text" placeholder="Digite sua mensagem" bind:value={newMessage} maxlength="100" />
+      <button type="submit" disabled={!newMessage}>💥</button>
     </form>
+
+    {#if !canAutoScroll}
+    <div class="scroll-button">
+      <button on:click={autoScroll} class:red={unreadMessages}>
+        {#if unreadMessages}
+          💬
+        {/if}
+        👇
+      </button>
+    </div>
+   {/if}
+   
   {:else}
     <main>
       <Login />
