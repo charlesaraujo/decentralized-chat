@@ -1,7 +1,9 @@
 <script>
 	import Header from './components/Header.svelte';
+	import Chat from './components/Chat.svelte'
 </script>
 
-<main>
+<div class="app">
 	<Header />
-</main>
+	<Chat />
+</div>
